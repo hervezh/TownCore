@@ -1,6 +1,6 @@
 # Town Core
 
-Town Core is a town-building and warfare plugin for Paper servers. It gives players a proper setup for founding towns, claiming land, managing a bank, building up a town economy, and fighting over territory.
+Town Core is a town-building and warfare plugin for minecraft servers. It gives players a proper setup for founding towns, claiming land, managing a bank, building up a town economy, and fighting over territory.
 
 This is not just a claims plugin. It is built around the idea that each town has a core, a community, a progression system, and a reason to defend what it has built.
 
