@@ -14,7 +14,7 @@ public class TownPlaceholderExpansion extends PlaceholderExpansion {
 
     @Override
     public String getIdentifier() {
-        return "silvarys";
+        return "towncore";
     }
 
     @Override

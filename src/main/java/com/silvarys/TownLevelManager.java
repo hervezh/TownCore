@@ -116,6 +116,7 @@ public class TownLevelManager {
             if (newTokens > currentTokens) {
                 Main.logTownAction(townName, "Town reached Level " + newTownLevel + " and earned " + (newTokens - currentTokens) + " upgrade tokens.");
             }
+        }
     }
 
     public static int calculateTownLevel(String townName) {
@@ -246,4 +247,4 @@ public class TownLevelManager {
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1.2f);
         }
     }
-}
+}

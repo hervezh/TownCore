@@ -162,14 +162,14 @@ public class TutorialManager {
         BookMeta meta = (BookMeta) book.getItemMeta();
 
         if (meta != null) {
-            meta.setTitle("Silvarys Starter Guide");
-            meta.setAuthor("The Ancient Rulers");
+            meta.setTitle("Town Core Starter Guide");
+            meta.setAuthor("Town Core");
 
             List<Component> pages = new ArrayList<>();
 
-            pages.add(Component.text("Welcome to Silvarys!\n\n")
+            pages.add(Component.text("Welcome to Town Core!\n\n")
                     .color(TextColor.color(0x000000))
-                    .append(Component.text("This guide will help you found your kingdom and survive the coming wars.\n\n")
+                    .append(Component.text("This guide will help you found your settlement, grow your town, and survive the chaos around it.\n\n")
                             .color(TextColor.color(0x333333)))
                     .append(Component.text("Type /town tutorial in chat for more help!")));
 

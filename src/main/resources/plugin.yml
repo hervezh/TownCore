@@ -1,5 +1,5 @@
 name: Town Core
-version: 1.21.11
+version: 26.2
 main: com.silvarys.Main
 api-version: '1.21'
 
@@ -16,14 +16,26 @@ commands:
       - towncore
 
 permissions:
-  silvarys.staff:
+  towncore.staff:
     description: Allows access to Town Core staff commands and bypasses town command cooldowns
     default: op
 
-  silvarys.town.cooldown.bypass:
+  towncore.town.cooldown.bypass:
     description: Bypasses the 2-second /town command cooldown
     default: op
 
-  silvarys.town.invitecooldown.bypass:
+  towncore.town.invitecooldown.bypass:
     description: Bypasses the 30-second /town invite cooldown
+    default: op
+
+  silvarys.staff:
+    description: Legacy alias for towncore.staff
+    default: op
+
+  silvarys.town.cooldown.bypass:
+    description: Legacy alias for towncore.town.cooldown.bypass
+    default: op
+
+  silvarys.town.invitecooldown.bypass:
+    description: Legacy alias for towncore.town.invitecooldown.bypass
     default: op
