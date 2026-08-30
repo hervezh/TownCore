@@ -1,21 +1,44 @@
-MIT License
+# Source-Available Modification License v1.0
+Copyright (c) 2026 [Your Name]
 
-Copyright (c) 2026 Herve
+All rights reserved except for the permissions expressly granted below.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## 1. Permission
+You are permitted to:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+- View and study the source code.
+- Download and use the software for personal or non-commercial purposes.
+- Modify the source code for personal use.
+- Use modified versions on your own Minecraft server or private projects.
+- Create and submit contributions, including pull requests, to the original project.
+- Share patches or modifications that require the original software to function, provided they do not contain substantial portions of the original source code.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## 2. Restrictions
+You may not, without prior written permission from the copyright holder:
+
+- Sell, sublicense, or commercially distribute the software or a modified version of it.
+- Redistribute the original software or substantial portions of its source code.
+- Publish a modified version as a competing or replacement distribution of the original project.
+- Claim ownership or authorship of the original software.
+- Remove or alter copyright, attribution, or license notices.
+- Use the project's name, branding, logos, or other protected assets in a way that suggests an unofficial version is an official release.
+
+## 3. Ownership
+The original software and source code remain the property of their respective copyright holder(s).
+
+Modifying the software does not grant ownership of the original software.
+
+Contributors retain copyright in their original contributions unless they separately agree to transfer those rights.
+
+## 4. Contributions
+By submitting a contribution to the original project's repository, you grant the project maintainer a perpetual, worldwide, non-exclusive, royalty-free license to use, modify, reproduce, distribute, and incorporate that contribution into the project.
+
+## 5. No Warranty
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDER SHALL NOT BE LIABLE FOR DAMAGES ARISING FROM THE USE OF THE SOFTWARE.
+
+## 6. Other Rights
+No rights are granted except those explicitly stated in this license.
+
+Any use of the software outside these permissions requires prior permission from the copyright holder.
