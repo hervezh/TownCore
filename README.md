@@ -1,5 +1,7 @@
 # Town Core
 
+please note: before you use this plugin, please acknowledge that there is still many bugs to it, and yeah that's basically it. thanks for reading and planning to use my plugin!
+
 Town Core is a town-building and war plugin for minecraft servers. It gives players a proper setup for founding towns, claiming land, managing a bank, building up a town economy, and fighting over territory.
 
 Since I'm too lazy to like write a whole new category about the economy, the town plugin only supports the Vault Economy. (and also placeholderapi if anybody cares)
@@ -12,9 +14,9 @@ Since I'm too lazy to like write a whole new category about the economy, the tow
 - Adds a town bank with deposits, withdrawals, and town upkeep
 - Gives towns progression through task XP and town levels
 - Includes upgrades and passive perks for players inside their own town
-- Supports diplomacy between towns through allies, enemies, and wars
-- Adds a siege-style war system where the defender core is the main objective
-- Includes admin tools for rollback, backups, war management, and moderation
+- Supports diplomacy between towns through allies, enemies, and wars (still a w.i.p)
+- Adds a siege-style war system where the defender core is the main objective (still a w.i.p)
+- Includes admin tools for rollback, backups, war management, and moderation (still a w.i.p)
 - Works with PlaceholderAPI and Vault when installed
 
 ## How to craft a Town Core
