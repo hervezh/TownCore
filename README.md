@@ -2,7 +2,7 @@
 
 Town Core is a town-building and war plugin for minecraft servers. It gives players a proper setup for founding towns, claiming land, managing a bank, building up a town economy, and fighting over territory.
 
-Since I'm too lazy to like write a whole new category about the economy, the town plugin only supports the Vault Economy.
+Since I'm too lazy to like write a whole new category about the economy, the town plugin only supports the Vault Economy. (and also placeholderapi if anybody cares)
 
 ## What the plugin does
 
