@@ -160,6 +160,7 @@ public class TownCommand implements CommandExecutor {
             case "infochat" -> handleInfoChat(player, args);
             case "rollback" -> handleRollback(player, args);
             case "rollbackinfo" -> handleRollbackInfo(player, args);
+            case "staff" -> handleStaffCommands(player, args);
             case "adminwars" -> handleAdminWars(player);
             case "adminstartwar" -> handleAdminStartWar(player, args);
             case "adminendwar" -> handleAdminEndWar(player, args);
@@ -422,6 +423,9 @@ public class TownCommand implements CommandExecutor {
     };
 
     private static final String[][] HELP_ENTRIES_STAFF = {
+            {"/town staff war disable", "Disable all war actions on the server"},
+            {"/town staff war enable", "Re-enable war actions on the server"},
+            {"/town staff war status", "Show the current war system status"},
             {"/town inspect <town>", "Inspect full town information"},
             {"/town logs <town>", "View a town's audit logs"},
             {"/town backup", "Create a town data backup"},
@@ -3993,6 +3997,44 @@ public class TownCommand implements CommandExecutor {
         } else {
             player.sendMessage("§7Use §f/town rollback " + townName + " §7to roll back changes.");
             player.sendMessage("§7Example: §f/town rollback " + townName + " 30 §7(rolls back last 30 minutes)");
+        }
+    }
+
+    private void handleStaffCommands(Player player, String[] args) {
+        if (!player.isOp() && !player.hasPermission("silvarys.staff") && !player.hasPermission("towncore.staff")) {
+            player.sendMessage("§cOnly server operators can use staff war controls!");
+            return;
+        }
+
+        if (args.length < 2 || !args[1].equalsIgnoreCase("war")) {
+            player.sendMessage("§cUsage: /town staff war <enable|disable|status>");
+            return;
+        }
+
+        if (args.length < 3) {
+            player.sendMessage("§4§l--- War System ---");
+            player.sendMessage("§eStatus: " + (WarManager.isWarSystemEnabled() ? "§aEnabled" : "§cDisabled"));
+            player.sendMessage("§7Use: §f/town staff war enable§7, §f/town staff war disable§7, or §f/town staff war status");
+            return;
+        }
+
+        switch (args[2].toLowerCase()) {
+            case "enable", "on" -> {
+                WarManager.setWarSystemEnabled(true);
+                WarManager.setAutomaticWarSessionsEnabled(true);
+                player.sendMessage("§aWar system enabled.");
+                Bukkit.broadcastMessage("§4§l[WAR] §r§aThe war system has been enabled by an operator.");
+            }
+            case "disable", "off" -> {
+                WarManager.setWarSystemEnabled(false);
+                player.sendMessage("§cWar system disabled.");
+                Bukkit.broadcastMessage("§4§l[WAR] §r§cThe war system has been disabled by an operator.");
+            }
+            case "status" -> {
+                player.sendMessage("§4§l--- War System ---");
+                player.sendMessage("§eStatus: " + (WarManager.isWarSystemEnabled() ? "§aEnabled" : "§cDisabled"));
+            }
+            default -> player.sendMessage("§cUsage: /town staff war <enable|disable|status>");
         }
     }
 

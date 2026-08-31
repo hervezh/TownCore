@@ -1,5 +1,6 @@
 package com.silvarys;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -58,7 +59,10 @@ public class TownIncomeManager {
         // If this town is occupied, their income goes to the occupier
         String recipient = townName;
         if (WarManager.isOccupied(townName)) {
-            recipient = WarManager.getOccupier(townName);
+            String occupier = WarManager.getOccupier(townName);
+            if (occupier != null) {  // Fix for null occupier
+                recipient = occupier;
+            }
         }
 
         Random random = new Random();
@@ -97,6 +101,7 @@ public class TownIncomeManager {
         List<ItemStack> items = townCatMap.get(category);
 
         for (ItemStack existing : items) {
+            if (existing == null) continue;  // Fix for null ItemStack in list
             if (existing.isSimilar(item)) {
                 int space = existing.getMaxStackSize() - existing.getAmount();
                 if (space > 0) {
@@ -111,6 +116,10 @@ public class TownIncomeManager {
         if (item.getAmount() > 0) {
             if (items.size() < 8) {
                 items.add(item);
+            } else {
+                // Fix for silent item loss - log when storage is full
+                Bukkit.getLogger().warning("[TownCore] Income item dropped for " + townName 
+                    + ": storage full. Item: " + item.getType() + " x" + item.getAmount());
             }
         }
     }

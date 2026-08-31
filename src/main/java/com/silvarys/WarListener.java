@@ -235,7 +235,6 @@ public class WarListener implements Listener {
 
         // We want them to KEEP their gear, but DROP their potions.
         List<ItemStack> drops = event.getDrops();
-        List<ItemStack> toKeep = new ArrayList<>();
         List<ItemStack> toDrop = new ArrayList<>();
 
         for (ItemStack item : drops) {
@@ -243,19 +242,15 @@ public class WarListener implements Listener {
 
             if (isPotion(item.getType())) {
                 toDrop.add(item);
-            } else {
-                toKeep.add(item);
             }
         }
 
-        // Modify the death drops to only contain potions
+        // Modify the death drops to only contain potions (single operation)
         drops.clear();
         drops.addAll(toDrop);
 
         // Keep the rest in inventory
         event.setKeepInventory(true);
-        event.getDrops().clear();
-        event.getDrops().addAll(toDrop);
         
         // Remove potions from the saved inventory so they aren't duplicated
         player.getInventory().remove(Material.POTION);
@@ -296,6 +291,8 @@ public class WarListener implements Listener {
 
         // Award points for kills
         String victimTown = Main.playerTown.get(player.getUniqueId());
+        if (victimTown == null) return;  // Player not in a town - can't award points
+        
         WarManager.War war = WarManager.getWarByTown(victimTown);
         
         if (war != null && war.activeSession) {

@@ -17,8 +17,8 @@ import java.util.UUID;
 public class WarManager {
 
     private static final List<War> wars = new ArrayList<>();
-    private static final Map<String, Integer> coreHealthPercent = new HashMap<>();
-    private static final Map<String, String> occupiedBy = new HashMap<>(); // defenderTown -> attackerTown
+    private static final Map<String, Integer> coreHealthPercent = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final Map<String, String> occupiedBy = new java.util.concurrent.ConcurrentHashMap<>(); // defenderTown -> attackerTown
     private static final Map<String, Location> originalCoreLocations = new HashMap<>();
     private static final Map<String, Integer> teleportTasks = new HashMap<>();
     private static final Map<String, Long> lastDamageTime = new HashMap<>();
@@ -30,6 +30,7 @@ public class WarManager {
     private static long lastSessionEndTime = 0L;
 
     private static boolean automaticWarSessionsEnabled = false;
+    private static boolean warSystemEnabled = true;
 
     public static class War {
         public String attackerTown;
@@ -58,6 +59,13 @@ public class WarManager {
     private static final long SHIELD_DURATION_MS = 3 * 24 * 60 * 60 * 1000L;
 
     public static void declareWar(Player player, String attackerTown, String defenderTown) {
+        if (!warSystemEnabled) {
+            if (player != null) {
+                player.sendMessage("§cWars are currently disabled on this server.");
+            }
+            return;
+        }
+
         if (attackerTown == null || defenderTown == null) return;
 
         // check if the defender has a peace shield active
@@ -189,11 +197,37 @@ public class WarManager {
     }
 
     public static boolean forceStartSession(String townName, int minutes, String staffName) {
+        if (townName == null) {
+            Bukkit.getLogger().warning("[TownCore] forceStartSession called with null townName");
+            return false;
+        }
+        
+        if (!warSystemEnabled) {
+            Bukkit.getLogger().info("[TownCore] forceStartSession failed: War system is disabled");
+            return false;
+        }
+
         War war = getWarByTown(townName);
 
-        if (war == null) return false;
-        if (war.activeSession) return false;
-        if (hasActiveWarSession()) return false;
+        if (war == null) {
+            Bukkit.getLogger().warning("[TownCore] forceStartSession failed: No war found involving " + townName);
+            return false;
+        }
+        
+        if (war.activeSession) {
+            Bukkit.getLogger().warning("[TownCore] forceStartSession failed: War session already active for " + getWarId(war));
+            return false;
+        }
+        
+        if (hasActiveWarSession()) {
+            Bukkit.getLogger().warning("[TownCore] forceStartSession failed: Another war session is already active");
+            return false;
+        }
+
+        if (minutes <= 0) {
+            Bukkit.getLogger().warning("[TownCore] forceStartSession failed: Invalid duration " + minutes + " minutes");
+            return false;
+        }
 
         war.activeSession = true;
         war.sessionEndTime = System.currentTimeMillis() + (minutes * 60L * 1000L);
@@ -211,15 +245,29 @@ public class WarManager {
  
         playGlobalWarHorn();
         startTeleportTask(war);
+        
+        Bukkit.getLogger().info("[TownCore] War session started: " + getWarId(war) + " by " + staffName);
 
         return true;
     }
 
     public static boolean forceEndSessionById(String warId, String staffName) {
+        if (warId == null) {
+            Bukkit.getLogger().warning("[TownCore] forceEndSessionById called with null warId");
+            return false;
+        }
+        
         War war = getWarById(warId);
 
-        if (war == null) return false;
-        if (!war.activeSession) return false;
+        if (war == null) {
+            Bukkit.getLogger().warning("[TownCore] forceEndSessionById failed: War not found with ID " + warId);
+            return false;
+        }
+        
+        if (!war.activeSession) {
+            Bukkit.getLogger().warning("[TownCore] forceEndSessionById failed: War session not active for " + warId);
+            return false;
+        }
 
         war.activeSession = false;
         war.sessionEndTime = 0L;
@@ -242,6 +290,8 @@ public class WarManager {
         Main.townUpgrades.getOrDefault(war.defenderTown, new HashSet<>()).remove(TownUpgradesManager.PERK_REINFORCED_CORE);
 
         restoreCore(war);
+        
+        Bukkit.getLogger().info("[TownCore] War session ended: " + id + " by " + staffName);
 
         return true;
     }
@@ -289,13 +339,19 @@ public class WarManager {
             return;
         }
 
-        war.attackerPoints++;
+        // Validate war still exists and is active before awarding points
+        War currentWar = getWarByDefenderTown(defenderTown);
+        if (currentWar == null || !currentWar.activeSession) {
+            return;
+        }
+
+        currentWar.attackerPoints++;
         coreHealthPercent.put(defenderTown, 100);
 
-        Bukkit.broadcastMessage("§4§l[WAR] §r§f" + war.attackerTown
-                + " §chas destroyed §f" + war.defenderTown + "§c's Town Core!");
-        Bukkit.broadcastMessage("§cScore: §f" + war.attackerTown + " " + war.attackerPoints
-                + " §7- §f" + war.defenderPoints + " " + war.defenderTown);
+        Bukkit.broadcastMessage("§4§l[WAR] §r§f" + currentWar.attackerTown
+                + " §chas destroyed §f" + currentWar.defenderTown + "§c's Town Core!");
+        Bukkit.broadcastMessage("§cScore: §f" + currentWar.attackerTown + " " + currentWar.attackerPoints
+                + " §7- §f" + currentWar.defenderPoints + " " + currentWar.defenderTown);
 
         Location core = Main.townCoreLocation.get(defenderTown);
 
@@ -365,12 +421,31 @@ public class WarManager {
         return automaticWarSessionsEnabled;
     }
 
+    public static boolean isWarSystemEnabled() {
+        return warSystemEnabled;
+    }
+
+    public static void setWarSystemEnabled(boolean enabled) {
+        warSystemEnabled = enabled;
+
+        if (!enabled) {
+            automaticWarSessionsEnabled = false;
+            for (War war : wars) {
+                war.activeSession = false;
+                war.sessionEndTime = 0L;
+            }
+            WarBossBarManager.stopAllWarBossBars();
+            return;
+        }
+    }
+
     public static void setAutomaticWarSessionsEnabled(boolean enabled) {
         automaticWarSessionsEnabled = enabled;
     }
 
     public static void startAutomaticWarScheduler(JavaPlugin plugin) {
         plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            if (!warSystemEnabled) return;
             if (!automaticWarSessionsEnabled) return;
             if (hasActiveWarSession()) return;
             if (wars.isEmpty()) return;
@@ -419,9 +494,14 @@ public class WarManager {
     }
 
     public static void tickWarSessions() {
+        if (!warSystemEnabled) return;
+
         long now = System.currentTimeMillis();
 
-        for (War war : wars) {
+        // Use Iterator to safely remove elements during iteration (fix for concurrent modification)
+        Iterator<War> iterator = wars.iterator();
+        while (iterator.hasNext()) {
+            War war = iterator.next();
             if (war.activeSession && war.sessionEndTime > 0 && now >= war.sessionEndTime) {
                 war.activeSession = false;
                 war.sessionEndTime = 0L;
@@ -466,7 +546,9 @@ public class WarManager {
     }
 
     private static void tickCoreVisuals() {
-        for (War war : wars) {
+        // Create a snapshot to avoid concurrent modification issues
+        List<War> warSnapshot = new ArrayList<>(wars);
+        for (War war : warSnapshot) {
             if (!war.activeSession) continue;
 
             String defender = war.defenderTown;
@@ -601,6 +683,11 @@ public class WarManager {
     }
 
     public static void revolt(Player player, String townName) {
+        if (!warSystemEnabled) {
+            player.sendMessage("§cWars are currently disabled on this server.");
+            return;
+        }
+
         if (!isOccupied(townName)) {
             player.sendMessage("§cYour town is not occupied!");
             return;
@@ -703,7 +790,10 @@ public class WarManager {
         if (current == null || original == null) return;
 
         List<String> chunks = new ArrayList<>(Main.townChunks.getOrDefault(defender, new HashSet<>()));
-        if (chunks.isEmpty()) return;
+        if (chunks.isEmpty()) {
+            Bukkit.broadcastMessage("§4§l[WAR] §r§cCore teleport failed: No valid chunks found for §f" + defender);
+            return;
+        }
 
         java.util.Collections.shuffle(chunks);
         for (String chunkKey : chunks) {
@@ -749,6 +839,9 @@ public class WarManager {
                 }
             }
         }
+        
+        // If we get here, no valid location was found
+        Bukkit.broadcastMessage("§4§l[WAR] §r§c⚠ Warning: §fCore teleport failed for §f" + defender + "§f - no valid locations found!");
     }
 
     private static void restoreCore(War war) {

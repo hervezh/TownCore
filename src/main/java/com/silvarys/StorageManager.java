@@ -197,7 +197,7 @@ public class StorageManager {
             config.set("pendingRenames." + entry.getKey() + ".requester", Main.pendingRenameRequester.getOrDefault(entry.getKey(), "Unknown"));
         }
         List<String> lockedEntries = LockManager.lockedBlockOwners.entrySet().stream()
-                .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.toList());
+                .map(e -> e.getKey() + "==" + e.getValue()).collect(Collectors.toList());
         config.set("lockedBlocks", lockedEntries);
         config.set("subdivisions", Main.subdividedChunks);
         config.set("ruinedCores", new ArrayList<>(Main.ruinedCores.entrySet().stream()
@@ -440,7 +440,7 @@ public class StorageManager {
         }
         if (config.contains("lockedBlocks")) {
             for (String entry : config.getStringList("lockedBlocks")) {
-                String[] parts = entry.split("=", 2);
+                String[] parts = entry.split("==", 2);
                 if (parts.length == 2) LockManager.lockedBlockOwners.put(parts[0], parts[1]);
             }
         }
